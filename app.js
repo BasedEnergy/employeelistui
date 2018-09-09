@@ -41,8 +41,6 @@ const employeeList = [
   }
 ];
 
-const userFunction = prompt('Input a command');
-
 // print all array objects
 if (userFunction === 'print'){
   for (let i = 0; i < employeeList.length; i++){
@@ -51,7 +49,6 @@ if (userFunction === 'print'){
   render (employeeList[i].phoneNum);
   }
 }
-
 
 // verify employee name with T or F
 else if (userFunction === 'verify'){
