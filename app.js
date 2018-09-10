@@ -41,116 +41,159 @@ const employeeList = [
   }
 ];
 
-// print all array objects
-if (userFunction === 'print'){
-  for (let i = 0; i < employeeList.length; i++){
-  render (employeeList[i].name);
-  render (employeeList[i].officeNum);
-  render (employeeList[i].phoneNum);
+var activeList = [];
+const employee = $('#displayboard');
+
+const render = function(array){
+  if(!Array.isArray(array)) {
+    console.log('lol');
+    employee.append(`<div class='render'>${array.name}</div>`);
+    employee.append(`<div class='render'>${array.officeNum}</div>`);
+    employee.append(`<div class='render'>${array.phoneNum}</div>`);
+    return;
+  }
+
+  for (let i = 0; i <array.length; i++){
+    employee.append(`<div class='render'>${array[i].name}</div>`);
+    employee.append(`<div class='render'>${array[i].officeNum}</div>`);
+    employee.append(`<div class='render'>${array[i].phoneNum}</div>`);
+    employee.append(`<br>`);
   }
 }
 
-// verify employee name with T or F
-else if (userFunction === 'verify'){
-  const verifyName = prompt('enter employee name:');
-  msg = 'false';
+// print all array objects
+const printEmp = function(){
+  event.preventDefault();
+  render(employeeList);
+}
+
+$('#print').on('click', printEmp);
+
+
+// verify employee name 
+const runVerify = function(){
+  event.preventDefault();
+  const input = $('#verifyinput').val();
+  msg = "Employee not found";
   for (let i = 0; i < employeeList.length; i++){
-    if (employeeList[i].name === verifyName){
-    msg = 'true';
+    if (employeeList[i].name.toLowerCase() === input.toLowerCase()){
+      msg = "Employee found";
     }
   }
-  render (msg);
+  employee.append(msg);
 }
+
+const verifyEmp = function(){
+  event.preventDefault();
+  employee.empty();
+  employee.append(`<div><form>
+  <input type="text" id="verifyinput" placeholder="employee name" autocomplete="off" />
+  <button id="verifysubmit">Verify</button>
+  </form></div>`);
+  $('#verifysubmit').on('click', runVerify);
+}
+
+$('#verify').on('click', verifyEmp);
 
 //lookup employee information
-else if (userFunction === 'lookup'){
-  const lookupName = prompt('enter employee name:');
+const runLookup = function(){
+  event.preventDefault();
+  activeList= [];
+  const input = $('#lookupinput').val();
   for (let i = 0; i < employeeList.length; i++){
-    if (employeeList[i].name === lookupName){
-      render (employeeList[i].name);
-      render (employeeList[i].officeNum);
-      render (employeeList[i].phoneNum);
+    if (employeeList[i].name.toLowerCase() === input.toLowerCase()){
+      activeList.push(employeeList[i]);
     }
   }
+  if (activeList.length !== 0){
+    render(activeList);
+  }
+  else {
+    employee.append('Employee Not Found');
+  }
 }
+
+const lookupEmp = function(){
+  event.preventDefault();
+  employee.empty();
+  employee.append(`<div><form>
+  <input type="text" id="lookupinput" placeholder="employee name" autocomplete="off" />
+  <button id="lookupsubmit">Lookup</button>
+  </form></div>`);
+  $('#lookupsubmit').on('click', runLookup);
+}
+
+$('#lookup').on('click', lookupEmp);
 
 //contains - prints all employee info if contains string
-else if (userFunction === 'contains'){
-    const containsName = prompt('enter a partial name:');
-    for (let i = 0; i < employeeList.length; i++){
-        if (employeeList[i].name.includes(containsName)){
-        render (employeeList[i].name);
-        render (employeeList[i].officeNum);
-        render (employeeList[i].phoneNum);
+const runContains = function(){
+  event.preventDefault();
+  activeList = [];
+  const input = $('#containsinput').val();
+  for (let i = 0; i < employeeList.length; i++){
+    if (employeeList[i].name.toLowerCase().includes(input.toLowerCase())){
+      activeList.push(employeeList[i]);
     }
   }
+  if (activeList.length !== 0){
+  render(activeList);
+  }
+  else {
+    employee.append('Employees Not Found');
+  }
 }
+
+const containsEmp = function(){
+  event.preventDefault();
+  employee.empty();
+  employee.append(`<div><form>
+  <input type="text" id="containsinput" placeholder="partial employee name" autocomplete="off" />
+  <button id="containsubmit">Contains</button>
+  </form></div>`);
+  $('#containsubmit').on('click', runContains);
+}
+
+$('#contains').on('click', containsEmp);
 
 //update - prompt for name, let user update field, print new info
-else if (userFunction === 'update'){
-  const updateName = prompt('enter employee name');
-  const updateField = prompt('Update name, officeNum, or phoneNum?');
-  const updateValue = prompt('what is the new value?');
+const runUpdate = function(){
+  event.preventDefault();
+  var found = false; 
+  const nameinput = $('#nameinput').val();
+  const numberinput =$('#numberinput').val();
+  const phoneinput = $('#phoneinput').val();
   for (let i = 0; i < employeeList.length; i++){
-    if (updateName === employeeList[i].name){
-      if (updateField === 'name'){
-        employeeList[i].name = updateValue;
-      }
-      else if (updateField === 'officeNum'){
-        employeeList[i].officeNum = updateValue;
-      }
-      else if (updateField === 'phoneNum'){
-        employeeList[i].phoneNum = updateValue;
-      }
-      render(employeeList[i].name);
-      render(employeeList[i].officeNum);
-      render(employeeList[i].phoneNum);
+    if (employeeList[i].name.toLowerCase() === nameinput.toLowerCase()){
+      employeeList[i].officeNum = numberinput;
+      employeeList[i].phoneNum = phoneinput;
+      render(employeeList[i]);
+      found = true;
+      break;
     }
   }
+  if (!found) {
+    employee.append('Employee Not Found');
+  }
 }
+
+const updateEmp = function(){
+  event.preventDefault();
+  employee.empty();
+  employee.append(`<div><form>
+  <label for="nameinput">Name</label><input type="text" id="nameinput" placeholder="employee name" autocomplete="off" /><br>
+  <label for="numberinput">Number</label><input type="text" id="numberinput" placeholder="employee office number" autocomplete="off" /><br>
+  <label for="phoneinput">Phone</label><input type="text" id="phoneinput" placeholder="employee phone number" autocomplete="off" /><br>
+  <button id="updatesubmit">Update</button>
+  </form></div>`);
+  $('#updatesubmit').on('click', runUpdate);
+}
+
+$('#update').on('click', updateEmp);
+
 
 // add employee info to list
-else if (userFunction === 'add'){
-  const newName = prompt('enter new employee name');
-  const newOffice = prompt('enter new office number');
-  const newNumber = prompt('enter new telephone number');
-  var newEmployee = {
-    name: newName,
-    officeNum: newOffice,
-    phoneNum: newNumber
-  }
-  employeeList.push(newEmployee);
-  for (let i = 0; i < employeeList.length; i++){
-    render (employeeList[i].name);
-    render (employeeList[i].officeNum);
-    render (employeeList[i].phoneNum);
-  }
-}
+
 
 // delete object from array
-else if (userFunction === 'delete') {
-  const deleteName = prompt('which employee to delete?');
-  for (let i = 0; i < employeeList.length; i++) {
-    if (deleteName === employeeList[i].name) {
-      employeeList.splice(deleteName, 1);
-    }
-    render(employeeList[i].name);
-    render(employeeList[i].officeNum);
-    render(employeeList[i].phoneNum);
-  }
-}
 
-// delete all men from employeeList
-else if (userFunction === "utopify") {
-const utopiaList = prompt('want to make the workplace more chill?');
-if (utopiaList === 'yes'){
-  employeeList.splice(1, 1);
-  employeeList.splice(3, 1);
-  employeeList.splice(4, 1);
-  }
-  for (let i = 0; i < employeeList.length; i++) {
-    render(employeeList[i].name);
-    render(employeeList[i].officeNum);
-    render(employeeList[i].phoneNum);
-  }
-}
+
