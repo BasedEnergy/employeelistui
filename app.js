@@ -1,4 +1,4 @@
-const employeeList = [
+var employeeList = [
   {
     name: 'Jan',
     officeNum: 1,
@@ -46,7 +46,6 @@ const employee = $('#displayboard');
 
 const render = function(array){
   if(!Array.isArray(array)) {
-    console.log('lol');
     employee.append(`<div class='render'>${array.name}</div>`);
     employee.append(`<div class='render'>${array.officeNum}</div>`);
     employee.append(`<div class='render'>${array.phoneNum}</div>`);
@@ -64,6 +63,7 @@ const render = function(array){
 // print all array objects
 const printEmp = function(){
   event.preventDefault();
+  employee.empty();
   render(employeeList);
 }
 
@@ -192,8 +192,63 @@ $('#update').on('click', updateEmp);
 
 
 // add employee info to list
+const runAdd = function(){
+  event.preventDefault();
+  activeList = {
+    name: '',
+    officeNum: '',
+    phoneNum: ''
+  };
+  activeList.name = $('#nameinput').val();
+  activeList.officeNum = $('#numberinput').val();
+  activeList.phoneNum = $('#phoneinput').val();
 
+  render(activeList);
+  employeeList.push(activeList);
+}
+
+const addEmp = function(){
+  event.preventDefault();
+  employee.empty();
+  employee.append(`<div><form>
+  <label for="nameinput">Name</label><input type="text" id="nameinput" placeholder="employee name" autocomplete="off" /><br>
+  <label for="numberinput">Number</label><input type="text" id="numberinput" placeholder="employee office number" autocomplete="off" /><br>
+  <label for="phoneinput">Phone</label><input type="text" id="phoneinput" placeholder="employee phone number" autocomplete="off" /><br>
+  <button id="addsubmit">Add</button>
+  </form></div>`);
+  $('#addsubmit').on('click', runAdd);
+}
+
+$('#add').on('click', addEmp);
 
 // delete object from array
+const runDelete = function(){
+  event.preventDefault();
+  var found = false;
+  const input = $('#deleteinput').val();
+  for (let i = 0; i < employeeList.length; i++){
+    if (employeeList[i].name.toLowerCase() === input.toLowerCase()){
+      employeeList.splice(i, 1);
+      employee.append('Employee Deleted');
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    employee.append('Employee Not Found');
+  }
+}
+
+const deleteEmp = function(){
+  event.preventDefault();
+  employee.empty();
+  employee.append(`<div><form>
+  <input type="text" id="deleteinput" placeholder="employee name" autocomplete="off" />
+  <button id="deletesubmit">Delete</button>
+  </form></div>`);
+  $('#deletesubmit').on('click', runDelete);
+}
+
+$('#delete').on('click', deleteEmp);
 
 
